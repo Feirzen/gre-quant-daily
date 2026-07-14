@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1116">
+<title>GRE Quant Daily</title>
+<style>
+  :root{
+    --bg:#0e1116; --card:#171b23; --card2:#1e242f; --line:#2a3140;
+    --text:#e8ecf3; --dim:#8b94a7; --accent:#4f8ef7; --accent2:#7c5cff;
+    --good:#2fbf71; --bad:#e5534b; --warn:#e6a23c; --gold:#f5b83d;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:16px; line-height:1.5;}
+  #app{max-width:560px;margin:0 auto;padding:16px 16px 48px;
+    padding-top:calc(16px + env(safe-area-inset-top));}
+  h1{font-size:1.35rem;margin:0;} h2{font-size:1.15rem;margin:0 0 8px;}
+  .row{display:flex;align-items:center;gap:8px;}
+  .spread{justify-content:space-between;}
+  .pill{display:inline-flex;align-items:center;gap:5px;background:var(--card2);
+    border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+    font-size:.85rem;font-weight:600;white-space:nowrap;}
+  .pill.gold{color:var(--gold);border-color:#5a4a1e;background:#241f12;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px;margin:14px 0;}
+  .chip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--accent);background:#16233a;
+    border-radius:6px;padding:2px 8px;margin-bottom:6px;}
+  .dim{color:var(--dim);} .small{font-size:.85rem;}
+  button{font:inherit;cursor:pointer;border:none;border-radius:12px;}
+  .btn{display:block;width:100%;padding:14px;font-size:1.02rem;font-weight:700;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+    margin-top:14px;}
+  .btn:active{transform:scale(.98);}
+  .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line);}
+  .btn.slim{padding:10px;font-size:.92rem;margin-top:10px;}
+  .read{font-size:.97rem;}
+  .read p{margin:.6em 0;}
+  .read b{color:#fff;}
+  .read .fx{background:var(--card2);border:1px solid var(--line);border-radius:10px;
+    padding:8px 12px;margin:8px 0;font-size:.95rem;}
+  .read table{border-collapse:collapse;margin:8px 0;font-size:.9rem;}
+  .read td,.read th{border:1px solid var(--line);padding:4px 10px;}
+  sup,sub{font-size:.7em;}
+  /* choices */
+  .choice{display:block;width:100%;text-align:left;background:var(--card2);
+    color:var(--text);border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin:8px 0;font-size:.97rem;}
+  .choice .key{display:inline-block;width:1.4em;font-weight:700;color:var(--dim);}
+  .choice.sel{border-color:var(--accent);background:#16233a;}
+  .choice.correct{border-color:var(--good);background:#12291d;}
+  .choice.wrong{border-color:var(--bad);background:#2b1715;}
+  .choice:disabled{opacity:1;}
+  .qtybox{display:flex;gap:10px;margin:12px 0;}
+  .qty{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:12px;
+    padding:10px;text-align:center;}
+  .qty .lbl{font-size:.7rem;font-weight:700;letter-spacing:.08em;color:var(--dim);
+    text-transform:uppercase;}
+  .qty .val{font-size:1.05rem;margin-top:4px;font-weight:600;}
+  input[type=text]{width:100%;padding:12px;font:inherit;font-size:1.05rem;
+    background:var(--card2);color:var(--text);border:1.5px solid var(--line);
+    border-radius:12px;outline:none;}
+  input[type=text]:focus{border-color:var(--accent);}
+  .exp{border-left:3px solid var(--accent);background:var(--card2);
+    border-radius:0 12px 12px 0;padding:10px 14px;margin-top:14px;font-size:.93rem;}
+  .exp.good{border-left-color:var(--good);} .exp.bad{border-left-color:var(--bad);}
+  .verdict{font-weight:800;margin-bottom:4px;}
+  .verdict.good{color:var(--good);} .verdict.bad{color:var(--bad);}
+  .dots{display:flex;gap:6px;margin:10px 0 2px;}
+  .dot{width:10px;height:10px;border-radius:99px;background:var(--line);}
+  .dot.on{background:var(--accent);} .dot.good{background:var(--good);}
+  .dot.bad{background:var(--bad);}
+  .qtype{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--warn);margin:4px 0 8px;}
+  /* mastery bars */
+  .trow{display:flex;align-items:center;gap:12px;padding:12px 4px;
+    border-bottom:1px solid var(--line);cursor:pointer;}
+  .trow:last-child{border-bottom:none;}
+  .tinfo{flex:1;min-width:0;}
+  .tname{font-weight:600;font-size:.95rem;}
+  .bar{height:7px;border-radius:99px;background:var(--line);margin-top:6px;overflow:hidden;}
+  .bar i{display:block;height:100%;border-radius:99px;}
+  .mnum{width:44px;text-align:right;font-weight:700;font-size:.9rem;}
+  .cathead{margin:18px 0 4px;font-size:.78rem;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--dim);}
+  /* confidence */
+  .conf{width:100%;margin:20px 0 6px;accent-color:var(--accent);}
+  .conflabel{text-align:center;font-size:1.2rem;font-weight:800;margin:4px 0 12px;}
+  .back{background:none;color:var(--dim);font-size:.95rem;padding:6px 0;font-weight:600;}
+  .bigscore{font-size:2.6rem;font-weight:800;text-align:center;margin:10px 0;}
+  .center{text-align:center;}
+  .statgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;}
+  .stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;
+    padding:10px;text-align:center;}
+  .stat .v{font-size:1.25rem;font-weight:800;}
+  .stat .k{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;}
+  .linkish{background:none;color:var(--accent);font-weight:600;padding:4px;font-size:.88rem;}
+  .footlinks{display:flex;justify-content:center;gap:14px;margin-top:18px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ CONTENT ============ */
+const TOPICS = [];
+function T(t){ TOPICS.push(t); }
+// __TOPICS_START__
+
+T({id:'integers', cat:'Arithmetic', name:'Integers, Divisibility & Remainders',
+read:`
+<p><b>Even/odd rules:</b> even ± even = even; odd ± odd = even; even ± odd = odd. even × anything = even; odd × odd = odd.</p>
+<p><b>Divisibility shortcuts:</b> by 3 → digits sum to a multiple of 3; by 4 → last two digits divisible by 4; by 6 → divisible by both 2 and 3; by 9 → digits sum to a multiple of 9.</p>
+<p><b>Remainders:</b> if n leaves remainder r when divided by d, then n = dq + r with 0 ≤ r &lt; d. Remainders behave nicely under arithmetic: you can add or multiply the remainders, then reduce mod d again.</p>
+<div class="fx">Numbers divisible by both a and b are the multiples of <b>lcm(a, b)</b> — not a×b unless a and b share no factors.</div>
+<p><b>GRE trap:</b> "divisible by 4 and 6" means multiples of 12 (the lcm), not 24.</p>`,
+qs:[
+{t:'qc', q:'n is a positive integer that leaves a remainder of 3 when divided by 7.',
+ A:'The remainder when 2n is divided by 7', B:'6', ans:2,
+ exp:'If n = 7q + 3, then 2n = 14q + 6. Since 14q is a multiple of 7, the remainder is 6. The quantities are equal. Shortcut: double the remainder (3→6), reduce mod 7 if needed.'},
+{t:'mc', q:'How many positive integers less than 50 are divisible by both 4 and 6?',
+ ch:['Three','Four','Five','Six','Eight'], ans:1,
+ exp:'Divisible by both 4 and 6 means divisible by lcm(4,6) = 12. Multiples of 12 below 50: 12, 24, 36, 48 — four of them. (Trap: using 4×6 = 24 gives only two.)'},
+{t:'ms', q:'If n is an even integer, which of the following <b>must</b> be even?',
+ ch:['n<sup>2</sup> + n','3n + 1','n / 2','n<sup>2</sup> − 2n','(n + 1)<sup>2</sup>'], ans:[0,3],
+ exp:'n² + n = even + even = even ✓. 3n + 1 = even + 1 = odd ✗. n/2 need not be even (n = 2 → 1) ✗. n² − 2n = even − even = even ✓. (n+1)² = odd² = odd ✗. On "must be" questions, test n = 2 to kill options fast.'},
+{t:'ne', q:'What is the remainder when 1,000 is divided by 11?', ans:10,
+ exp:'11 × 90 = 990, and 1,000 − 990 = 10. Remainder = 10.'}
+]});
+
+T({id:'fractions', cat:'Arithmetic', name:'Fractions & Decimals',
+read:`
+<p><b>Comparing fractions:</b> cross-multiply. To compare a/b vs c/d (positive), compare ad vs bc — bigger product goes with the fraction whose <i>numerator</i> was used.</p>
+<p><b>Complex fractions:</b> multiply top and bottom by the common denominator to clear everything at once.</p>
+<p><b>Repeating decimals:</b> 0.xxx… = x/9, 0.xyxy… = xy/99. So 0.333… = 3/9 = 1/3.</p>
+<div class="fx">Benchmarks worth memorizing: 1/6 ≈ 0.167, 1/7 ≈ 0.143, 1/8 = 0.125, 1/9 ≈ 0.111, 3/8 = 0.375, 5/8 = 0.625, 7/8 = 0.875.</div>
+<p><b>GRE trap:</b> when 0 &lt; x &lt; 1, squaring makes x <i>smaller</i>, and √x is <i>bigger</i> than x.</p>`,
+qs:[
+{t:'qc', A:'7/9', B:'0.78', ans:1,
+ exp:'7/9 = 0.777… which is less than 0.78, so Quantity B is greater. Cross-check: 7/9 vs 78/100 → 700 vs 702.'},
+{t:'mc', q:'What is the value of (1/3 + 1/4) ÷ (1/3 − 1/4)?',
+ ch:['1','7/12','6','7','12'], ans:3,
+ exp:'Multiply top and bottom by 12: top → 4 + 3 = 7, bottom → 4 − 3 = 1. So the value is 7. Clearing denominators beats finding each sum separately.'},
+{t:'mc', q:'Which of the following fractions is greatest?',
+ ch:['2/3','5/8','7/11','3/5','11/17'], ans:0,
+ exp:'Convert to decimals: 2/3 ≈ 0.667, 5/8 = 0.625, 7/11 ≈ 0.636, 3/5 = 0.6, 11/17 ≈ 0.647. Greatest is 2/3. Benchmarks + quick division wins here.'},
+{t:'ne', q:'Express 0.444… (repeating) as a fraction.', ans:0.4444444444,
+ exp:'A single repeating digit x gives x/9, so 0.444… = 4/9. (Entering 4/9 or 0.444 both count.)'}
+]});
+
+T({id:'percents', cat:'Arithmetic', name:'Percents & Percent Change',
+read:`
+<p><b>Percent change:</b> (new − old)/old × 100. The <i>original</i> value is always the denominator.</p>
+<p><b>Successive changes multiply:</b> +20% then −20% is ×1.2 × 0.8 = ×0.96, a net 4% <i>decrease</i> — they never cancel.</p>
+<p><b>Translation:</b> "x% of y" = (x/100)·y. And x% of y always equals y% of x.</p>
+<div class="fx">Increase by p% → multiply by (1 + p/100). Decrease by p% → multiply by (1 − p/100). Chain them for successive changes.</div>
+<p><b>GRE trap:</b> a 100% increase means doubling; a 200% increase means tripling.</p>`,
+qs:[
+{t:'mc', q:'The price of a jacket is increased by 20%, then the new price is decreased by 20%. The final price is what percent of the original price?',
+ ch:['96%','98%','100%','102%','104%'], ans:0,
+ exp:'×1.2 then ×0.8 = ×0.96 → 96% of the original. Successive percent changes never cancel because the second change acts on a different base.'},
+{t:'qc', A:'30% of 50', B:'50% of 30', ans:2,
+ exp:'Both equal 15 — x% of y = y% of x always (both are xy/100). Equal, answer C. This swap shows up constantly on the GRE.'},
+{t:'ne', q:'45 is 60% of what number?', ans:75,
+ exp:'0.60 · x = 45 → x = 45/0.6 = 75.'},
+{t:'mc', q:'A town’s population grew from 800 to 1,000. What was the percent increase?',
+ ch:['20%','25%','30%','75%','80%'], ans:1,
+ exp:'(1000 − 800)/800 = 200/800 = 25%. Trap answer 20% comes from wrongly dividing by the new value (200/1000).'}
+]});
+
+T({id:'ratios', cat:'Arithmetic', name:'Ratios, Rates & Work',
+read:`
+<p><b>Ratios are recipes, not amounts.</b> Boys:girls = 3:4 means 3x and 4x for some multiplier x — total is 7x, so the total must be a multiple of 7.</p>
+<p><b>Chaining ratios:</b> to get x:z from x/y and y/z, multiply the fractions.</p>
+<p><b>Rate basics:</b> distance = rate × time. Average speed = <i>total</i> distance ÷ <i>total</i> time (never the average of the two speeds unless times are equal).</p>
+<div class="fx">Work: if A finishes a job in a hours and B in b hours, together they take <b>ab/(a+b)</b> hours. (Add the rates: 1/a + 1/b.)</div>`,
+qs:[
+{t:'mc', q:'In a class the ratio of boys to girls is 3 to 4. If there are 84 students in total, how many girls are there?',
+ ch:['36','42','44','48','56'], ans:3,
+ exp:'3x + 4x = 84 → x = 12, so girls = 4x = 48. Quick check: 84 × (4/7) = 48.'},
+{t:'ne', q:'Machine A completes a job in 6 hours and machine B completes the same job in 3 hours. Working together at these rates, how many hours do they take?', ans:2,
+ exp:'Rates: 1/6 + 1/3 = 1/2 job per hour → 2 hours. Formula: ab/(a+b) = 18/9 = 2.'},
+{t:'qc', q:'A car travels 210 miles in 3.5 hours.', A:'The car’s average speed, in miles per hour', B:'62', ans:1,
+ exp:'210 ÷ 3.5 = 60 mph, which is less than 62. Quantity B is greater.'},
+{t:'mc', q:'If x/y = 3/5 and y/z = 10/7, what is x/z?',
+ ch:['3/7','21/50','6/7','10/21','15/14'], ans:2,
+ exp:'x/z = (x/y)(y/z) = (3/5)(10/7) = 30/35 = 6/7. The y’s cancel when you multiply.'}
+]});
+
+T({id:'exponents', cat:'Arithmetic', name:'Exponents & Roots',
+read:`
+<p><b>Core rules:</b> a<sup>m</sup>·a<sup>n</sup> = a<sup>m+n</sup>; (a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup>; a<sup>−n</sup> = 1/a<sup>n</sup>; a<sup>0</sup> = 1; a<sup>1/2</sup> = √a.</p>
+<p><b>Comparing towers:</b> rewrite with a common exponent. 2<sup>300</sup> vs 3<sup>200</sup> → (2<sup>3</sup>)<sup>100</sup> vs (3<sup>2</sup>)<sup>100</sup> → 8<sup>100</sup> vs 9<sup>100</sup>.</p>
+<p><b>Roots:</b> √(ab) = √a·√b, so √50 = 5√2. But √(a+b) ≠ √a + √b.</p>
+<div class="fx">−3<sup>2</sup> = −9 (exponent binds first), while (−3)<sup>2</sup> = 9. Parentheses matter.</div>`,
+qs:[
+{t:'mc', q:'(2<sup>3</sup>)<sup>4</sup> × 2<sup>−2</sup> =',
+ ch:['2<sup>5</sup>','2<sup>9</sup>','2<sup>10</sup>','2<sup>14</sup>','2<sup>24</sup>'], ans:2,
+ exp:'(2³)⁴ = 2¹², then 2¹² × 2⁻² = 2¹⁰. Multiply exponents through parentheses, add them when multiplying.'},
+{t:'qc', A:'2<sup>300</sup>', B:'3<sup>200</sup>', ans:1,
+ exp:'2³⁰⁰ = (2³)¹⁰⁰ = 8¹⁰⁰ and 3²⁰⁰ = (3²)¹⁰⁰ = 9¹⁰⁰. Since 9 > 8, Quantity B is greater. Common-exponent rewriting is the standard move.'},
+{t:'ne', q:'If 5<sup>x + 1</sup> = 125, what is x?', ans:2,
+ exp:'125 = 5³, so x + 1 = 3 → x = 2.'},
+{t:'ms', q:'Which of the following are equal to 1/9?',
+ ch:['3<sup>−2</sup>','9<sup>−1</sup>','(1/3)<sup>2</sup>','−3<sup>2</sup>','9<sup>1/2</sup>'], ans:[0,1,2],
+ exp:'3⁻² = 1/9 ✓, 9⁻¹ = 1/9 ✓, (1/3)² = 1/9 ✓. But −3² = −9 ✗ and 9^(1/2) = √9 = 3 ✗.'}
+]});
+
+T({id:'linear', cat:'Algebra', name:'Linear Equations & Inequalities',
+read:`
+<p><b>Inequalities flip</b> when you multiply or divide both sides by a negative number. That is the #1 tested fact.</p>
+<p><b>Absolute value:</b> |x| &lt; a means −a &lt; x &lt; a. |x| &gt; a means x &lt; −a or x &gt; a. For |expr| = a, solve expr = a and expr = −a.</p>
+<p><b>Systems:</b> add or subtract the equations to eliminate a variable — often the GRE asks for a combo like x + y directly, so look before solving fully.</p>
+<div class="fx">QC tip: an inequality gives a <i>range</i>. If the range includes values on both sides of Quantity B (or touches it), the answer is often D.</div>`,
+qs:[
+{t:'mc', q:'Which of the following describes all solutions of |2x − 3| &lt; 5?',
+ ch:['x &lt; 4','−4 &lt; x &lt; 1','−1 &lt; x &lt; 4','x &lt; −1 or x &gt; 4','−4 &lt; x &lt; 4'], ans:2,
+ exp:'−5 < 2x − 3 < 5 → −2 < 2x < 8 → −1 < x < 4.'},
+{t:'ne', q:'If 3(x − 2) = 2x + 7, what is x?', ans:13,
+ exp:'3x − 6 = 2x + 7 → x = 13.'},
+{t:'qc', q:'4 − 3x ≥ 16', A:'x', B:'−4', ans:3,
+ exp:'4 − 3x ≥ 16 → −3x ≥ 12 → x ≤ −4 (inequality flips when dividing by −3). So x could equal −4 (equal) or be less (B greater) — the relationship cannot be determined. Answer D.'},
+{t:'mc', q:'If x + y = 10 and x − y = 4, what is the value of xy?',
+ ch:['16','20','21','24','40'], ans:2,
+ exp:'Adding: 2x = 14 → x = 7, so y = 3, and xy = 21.'}
+]});
+
+T({id:'quadratics', cat:'Algebra', name:'Quadratics & Functions',
+read:`
+<p><b>The three identities</b> the GRE recycles endlessly:</p>
+<div class="fx">(x + y)² = x² + 2xy + y²<br>(x − y)² = x² − 2xy + y²<br>(x + y)(x − y) = x² − y²</div>
+<p>If you are given two of {x + y, xy, x² + y²}, you can always find the third.</p>
+<p><b>Factored quadratic</b> x² + bx + c = 0: the roots sum to −b and multiply to c.</p>
+<p><b>Functions:</b> f(x) is just a rule — substitute and simplify. Nothing fancy.</p>
+<p><b>GRE trap:</b> x² = 16 has TWO solutions, x = 4 and x = −4. Never assume positive.</p>`,
+qs:[
+{t:'mc', q:'What is the sum of the roots of x² − 5x − 14 = 0?',
+ ch:['−5','−2','2','5','14'], ans:3,
+ exp:'Factor: (x − 7)(x + 2) = 0 → roots 7 and −2, sum = 5. Shortcut: sum of roots = −b = 5.'},
+{t:'ne', q:'If f(x) = x² − 3x, what is f(5)?', ans:10,
+ exp:'f(5) = 25 − 15 = 10.'},
+{t:'qc', q:'x² = 16', A:'x', B:'4', ans:3,
+ exp:'x can be 4 (equal) or −4 (B greater). Cannot be determined — answer D. Squares hide negative solutions.'},
+{t:'mc', q:'If (x + y)² = 40 and xy = 6, what is x² + y²?',
+ ch:['22','26','28','34','46'], ans:2,
+ exp:'(x + y)² = x² + 2xy + y² → 40 = x² + y² + 12 → x² + y² = 28. No need to find x or y individually.'}
+]});
+
+T({id:'coord', cat:'Algebra', name:'Coordinate Geometry',
+read:`
+<p><b>Slope</b> = rise/run = (y₂ − y₁)/(x₂ − x₁). Parallel lines: equal slopes. Perpendicular: slopes multiply to −1.</p>
+<p><b>Line equation:</b> y = mx + b, where m is slope and b the y-intercept.</p>
+<div class="fx">Distance between points = √((Δx)² + (Δy)²) — it is just the Pythagorean theorem.<br>Midpoint = (average of x’s, average of y’s).</div>
+<p><b>GRE tip:</b> know the 3-4-5 and 5-12-13 patterns; distance questions almost always use them so the answer comes out clean.</p>`,
+qs:[
+{t:'mc', q:'What is the slope of the line passing through (2, 3) and (6, 11)?',
+ ch:['1/2','1','2','4','8'], ans:2,
+ exp:'(11 − 3)/(6 − 2) = 8/4 = 2.'},
+{t:'ne', q:'What is the distance between the points (1, 2) and (4, 6)?', ans:5,
+ exp:'√((4−1)² + (6−2)²) = √(9 + 16) = √25 = 5. A hidden 3-4-5 triangle.'},
+{t:'qc', A:'The slope of the line through (0, 0) and (3, 4)', B:'The slope of the line through (0, 0) and (4, 3)', ans:0,
+ exp:'Slopes are 4/3 vs 3/4. Since 4/3 > 1 > 3/4, Quantity A is greater.'},
+{t:'mc', q:'What is the midpoint of the segment joining (−2, 5) and (6, −1)?',
+ ch:['(2, 2)','(4, 4)','(2, 3)','(4, 2)','(3, 2)'], ans:0,
+ exp:'Average the coordinates: x = (−2 + 6)/2 = 2, y = (5 + (−1))/2 = 2 → (2, 2).'}
+]});
+
+T({id:'wordprobs', cat:'Algebra', name:'Word Problems: Rates, Mixtures & Ages',
+read:`
+<p><b>Average speed trap:</b> for a round trip at speeds a and b, average speed = 2ab/(a + b) — the harmonic mean, always closer to the <i>slower</i> speed. Never (a + b)/2.</p>
+<p><b>Mixtures:</b> track the amount of the pure substance. Adding water changes total volume but not the amount of acid/salt/etc.</p>
+<p><b>Ages:</b> define one variable now; a change of k years applies to <i>everyone</i>.</p>
+<div class="fx">Setup discipline: define the variable in words ("b = Ben’s age now"), write one equation per fact, then check the answer against the story.</div>`,
+qs:[
+{t:'mc', q:'A driver travels to a city at 60 mph and returns along the same route at 40 mph. What is the average speed for the round trip, in mph?',
+ ch:['45','48','50','52','54'], ans:1,
+ exp:'2ab/(a+b) = 2(60)(40)/100 = 48. It is below 50 because more time is spent at the slower speed. 50 is the trap.'},
+{t:'ne', q:'How many liters of pure water must be added to 2 liters of a 30% acid solution to obtain a 20% acid solution?', ans:1,
+ exp:'Acid stays fixed at 0.6 L. Need 0.6/(2 + w) = 0.20 → 2 + w = 3 → w = 1.'},
+{t:'mc', q:'Sara is 3 times as old as Ben. In 6 years she will be twice as old as Ben. How old is Sara now?',
+ ch:['6','12','15','18','24'], ans:3,
+ exp:'3b + 6 = 2(b + 6) → 3b + 6 = 2b + 12 → b = 6, so Sara is 18. Check: in 6 years, 24 vs 12 ✓.'},
+{t:'qc', q:'Train A travels at 50 mph for 3 hours. Train B travels at 60 mph for 2.5 hours.', A:'Distance traveled by Train A', B:'Distance traveled by Train B', ans:2,
+ exp:'A: 50 × 3 = 150 miles. B: 60 × 2.5 = 150 miles. Equal — answer C.'}
+]});
+
+T({id:'triangles', cat:'Geometry', name:'Triangles',
+read:`
+<p><b>Angle sum</b> = 180°. <b>Triangle inequality:</b> each side is strictly between the difference and the sum of the other two.</p>
+<p><b>Right triangles:</b> a² + b² = c². Memorize the families 3-4-5, 5-12-13, and their multiples (6-8-10, 9-12-15…).</p>
+<div class="fx">Special right triangles:<br>45-45-90 → sides x : x : x√2<br>30-60-90 → sides x : x√3 : 2x (short leg opposite 30°)</div>
+<p><b>Similar triangles:</b> sides scale by k → areas scale by k². A 2:3 side ratio means a 4:9 area ratio.</p>
+<p><b>Isosceles right triangle:</b> area = (hypotenuse)²/4 — a fast shortcut.</p>`,
+qs:[
+{t:'mc', q:'A right triangle has legs of length 9 and 12. What is the length of the hypotenuse?',
+ ch:['13','14','15','16','21'], ans:2,
+ exp:'This is a 3-4-5 triangle scaled by 3: 9-12-15. Or √(81 + 144) = √225 = 15.'},
+{t:'qc', q:'A triangle has sides of length 5 and 8.', A:'The length of the third side', B:'3', ans:0,
+ exp:'Triangle inequality: the third side is strictly between 8 − 5 = 3 and 8 + 5 = 13. It must be greater than 3 (never equal). Quantity A is greater.'},
+{t:'ne', q:'An isosceles right triangle has a hypotenuse of length 10. What is its area?', ans:25,
+ exp:'Legs = 10/√2, so area = (1/2)(10/√2)² = (1/2)(50) = 25. Shortcut: hyp²/4 = 100/4 = 25.'},
+{t:'mc', q:'Two similar triangles have corresponding sides in the ratio 2 : 3. What is the ratio of their areas?',
+ ch:['2 : 3','3 : 4','4 : 9','4 : 6','8 : 27'], ans:2,
+ exp:'Areas scale with the square of the side ratio: 2² : 3² = 4 : 9.'}
+]});
+
+T({id:'circles', cat:'Geometry', name:'Circles',
+read:`
+<p><b>Core formulas:</b> circumference = 2πr, area = πr². Diameter = 2r.</p>
+<p><b>Arcs and sectors are just fractions</b> of the circle: a central angle of θ° takes θ/360 of the circumference (arc length) and θ/360 of the area (sector).</p>
+<div class="fx">Inscribed angle = half the central angle on the same arc. Any angle inscribed in a semicircle (subtending a diameter) is 90°.</div>
+<p><b>QC tip:</b> π ≈ 3.14159 — sometimes a comparison hinges on knowing π a bit more precisely than "about 3."</p>`,
+qs:[
+{t:'ne', q:'The area of a circle is 49π. What is its radius?', ans:7,
+ exp:'πr² = 49π → r² = 49 → r = 7.'},
+{t:'mc', q:'A circle has radius 6. What is the length of an arc corresponding to a central angle of 60°?',
+ ch:['π','2π','3π','6π','12π'], ans:1,
+ exp:'60/360 = 1/6 of the circumference: (1/6)(2π·6) = 2π.'},
+{t:'qc', A:'The circumference of a circle with radius 3', B:'The perimeter of a square with side 4.7', ans:0,
+ exp:'Circumference = 6π ≈ 18.85; square perimeter = 18.8. Quantity A is (barely) greater — this is why knowing π ≈ 3.14159 matters.'},
+{t:'mc', q:'Points A, B, and C lie on a circle, and segment AC is a diameter. What is the measure of angle ABC?',
+ ch:['45°','60°','90°','120°','It cannot be determined'], ans:2,
+ exp:'An inscribed angle subtending a diameter is always 90° (Thales’ theorem), no matter where B sits on the circle.'}
+]});
+
+T({id:'areavol', cat:'Geometry', name:'Polygons, Area & Volume',
+read:`
+<p><b>Interior angle sum</b> of an n-sided polygon = (n − 2) × 180°. Pentagon → 540°, hexagon → 720°.</p>
+<div class="fx">Trapezoid area = (average of the parallel bases) × height<br>Cylinder volume = πr²h &nbsp;·&nbsp; Box volume = lwh &nbsp;·&nbsp; Cube surface area = 6s²</div>
+<p><b>Cube chains:</b> GRE loves side → surface area → volume conversions. From SA = 6s², get s, then volume = s³.</p>
+<p><b>Parallelogram</b> area = base × height (the <i>perpendicular</i> height, not the slanted side).</p>`,
+qs:[
+{t:'mc', q:'What is the sum of the interior angles of a pentagon?',
+ ch:['360°','480°','540°','600°','720°'], ans:2,
+ exp:'(5 − 2) × 180° = 540°.'},
+{t:'ne', q:'A cylinder has radius 3 and height 4. Its volume equals kπ. What is k?', ans:36,
+ exp:'V = πr²h = π(9)(4) = 36π, so k = 36.'},
+{t:'qc', q:'A cube has surface area 54.', A:'The volume of the cube', B:'25', ans:0,
+ exp:'6s² = 54 → s = 3 → volume = 27 > 25. Quantity A is greater.'},
+{t:'mc', q:'A trapezoid has parallel sides of length 8 and 12 and height 5. What is its area?',
+ ch:['40','48','50','60','100'], ans:2,
+ exp:'Average base × height = ((8 + 12)/2) × 5 = 10 × 5 = 50.'}
+]});
+
+T({id:'stats', cat:'Data Analysis', name:'Statistics: Mean, Median & SD',
+read:`
+<p><b>Mean</b> = sum ÷ count. Work with the <i>sum</i>: mean × count = total, and totals are easy to add/remove from.</p>
+<p><b>Median</b> = middle value when sorted (average the middle two if the count is even). Resistant to outliers; the mean is not.</p>
+<p><b>Standard deviation</b> measures spread from the mean. You will almost never compute it — you reason about it:</p>
+<div class="fx">Add the same constant to every value → mean and median shift, <b>SD and range unchanged</b>.<br>Multiply every value by k → mean, median, SD, and range all scale by |k|.</div>
+<p><b>Weighted average:</b> the overall mean sits closer to the group with more members.</p>`,
+qs:[
+{t:'mc', q:'The average of 5 numbers is 20. When one number is removed, the average of the remaining 4 numbers is 17. What number was removed?',
+ ch:['3','12','23','29','32'], ans:4,
+ exp:'Total was 100; new total is 68. Removed = 100 − 68 = 32. Always convert averages to sums.'},
+{t:'qc', q:'Data set: 2, 4, 6, 8, 10', A:'The mean of the set', B:'The median of the set', ans:2,
+ exp:'Both are 6. In an evenly spaced (arithmetic) set, mean = median = middle value. Equal — answer C.'},
+{t:'ne', q:'After 3 tests, Maya’s average score is 80. What must she score on the 4th test to raise her average to 84?', ans:96,
+ exp:'Needs total 4 × 84 = 336; has 240. Score = 96.'},
+{t:'ms', q:'Every value in a data set is increased by 5. Which of the following <b>must</b> be true?',
+ ch:['The mean increases by 5','The median increases by 5','The standard deviation increases by 5','The range is unchanged'], ans:[0,1,3],
+ exp:'Shifting all values moves mean and median by 5 but leaves spread untouched — SD and range are unchanged. So C is false: the SD does not increase.'}
+]});
+
+T({id:'counting', cat:'Data Analysis', name:'Counting & Probability',
+read:`
+<p><b>Fundamental counting principle:</b> independent choices multiply.</p>
+<p><b>Order matters → permutations:</b> n! arrangements of n distinct items. <b>Order doesn’t matter → combinations:</b> C(n, k) = n!/(k!(n−k)!).</p>
+<div class="fx">C(n, 2) = n(n−1)/2 — handshakes, pairs, segments between points. Worth memorizing.</div>
+<p><b>Probability</b> = favorable ÷ total (when outcomes are equally likely). Independent events multiply. For "at least one," use 1 − P(none).</p>`,
+qs:[
+{t:'mc', q:'A committee of 3 people is to be chosen from 7 candidates. How many different committees are possible?',
+ ch:['21','35','70','210','343'], ans:1,
+ exp:'Order does not matter: C(7,3) = 7·6·5/3! = 210/6 = 35. (210 is the permutation trap.)'},
+{t:'ne', q:'A fair coin is flipped twice. What is the probability of getting heads both times?', ans:0.25,
+ exp:'Independent events multiply: (1/2)(1/2) = 1/4. (Enter 1/4 or 0.25.)'},
+{t:'mc', q:'How many different arrangements are there of the 4 letters in MATH?',
+ ch:['4','12','16','24','256'], ans:3,
+ exp:'4! = 4 × 3 × 2 × 1 = 24.'},
+{t:'qc', q:'A bag contains 3 red and 5 blue marbles. Two marbles are drawn at random without replacement.',
+ A:'The probability that both marbles are red', B:'1/9', ans:1,
+ exp:'P = (3/8)(2/7) = 6/56 = 3/28 ≈ 0.107, while 1/9 ≈ 0.111. Quantity B is greater. Compare via cross-multiplication: 3·9 = 27 < 28.'}
+]});
+
+T({id:'sets', cat:'Data Analysis', name:'Overlapping Sets & Data Interpretation',
+read:`
+<div class="fx">Two groups: Total = Group1 + Group2 − Both + Neither</div>
+<p>People in both groups get counted twice when you add — subtract the overlap once. "Neither" catches everyone outside both circles.</p>
+<p><b>Data interpretation sets</b> (charts/tables) reward reading precisely: check units, check whether values are percents <i>of what total</i>, and estimate before computing.</p>
+<p><b>Percent-of-a-percent:</b> 40% of the 30% who said yes = 0.4 × 0.3 = 12% of everyone.</p>`,
+qs:[
+{t:'mc', q:'In a class of 30 students, 18 take biology, 15 take chemistry, and 8 take both. How many take neither subject?',
+ ch:['3','5','7','8','13'], ans:1,
+ exp:'30 = 18 + 15 − 8 + Neither → Neither = 30 − 25 = 5.'},
+{t:'ne', q:'In a survey, 60% of 400 respondents own a car, and 25% of the car owners own an electric car. How many respondents own an electric car?', ans:60,
+ exp:'Car owners: 0.6 × 400 = 240. Electric: 0.25 × 240 = 60.'},
+{t:'qc', q:'Of 100 households, 70 have a dog, 50 have a cat.', A:'The smallest possible number of households with both a dog and a cat', B:'20', ans:2,
+ exp:'Minimum overlap = 70 + 50 − 100 = 20 (when "neither" is 0). Equal — answer C. Max overlap would be 50.'},
+{t:'mc', q:'The table shows a store’s sales.<table><tr><th>Quarter</th><th>Sales</th></tr><tr><td>Q1</td><td>$40,000</td></tr><tr><td>Q2</td><td>$50,000</td></tr><tr><td>Q3</td><td>$60,000</td></tr><tr><td>Q4</td><td>$90,000</td></tr></table>Q4 sales were what percent of total annual sales?',
+ ch:['25%','30%','37.5%','40%','45%'], ans:2,
+ exp:'Total = 240,000. Q4 share = 90/240 = 3/8 = 37.5%.'}
+]});
+// __TOPICS_END__
+</script>
+
+<script>
+/* ============ APP ============ */
+const KEY = 'greq_v1';
+const QC = ['Quantity A is greater.','Quantity B is greater.','The two quantities are equal.','The relationship cannot be determined from the information given.'];
+const TYPE_LABEL = {qc:'Quantitative Comparison', mc:'Multiple Choice — select one', ms:'Select ALL that apply', ne:'Numeric Entry'};
+const CONF_WORDS = ['','Lost 😵', 'Shaky', 'Okay', 'Solid', 'Nailed it 💪'];
+
+let S = load();
+let sess = null;
+
+function load(){
+  try{ const s = JSON.parse(localStorage.getItem(KEY));
+    if(s && s.topics) return s; }catch(e){}
+  return {streak:0, best:0, lastDone:null, testDate:'2026-07-24', topics:{}};
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+
+function dstr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayStr(){ return dstr(new Date()); }
+function yesterdayStr(){ const d=new Date(); d.setDate(d.getDate()-1); return dstr(d); }
+function daysLeft(){
+  const t = new Date(S.testDate+'T00:00:00'); const n = new Date(todayStr()+'T00:00:00');
+  return Math.round((t-n)/86400000);
+}
+function liveStreak(){
+  return (S.lastDone===todayStr() || S.lastDone===yesterdayStr()) ? S.streak : 0;
+}
+function rec(id){ return S.topics[id]; }
+function mastery(id){
+  const r = rec(id); if(!r || !r.at.length) return null;
+  let c=0,t=0; r.at.forEach(a=>{c+=a.c; t+=a.t;});
+  const conf = r.at[r.at.length-1].conf/5;
+  return Math.round(100*(0.55*(c/t) + 0.45*conf));
+}
+function mcolor(m){ return m>=70?'var(--good)':(m>=40?'var(--warn)':'var(--bad)'); }
+function doneToday(){ return S.lastDone===todayStr(); }
+
+function pickTopic(excludeId){
+  const unseen = TOPICS.filter(t=>!rec(t.id) && t.id!==excludeId);
+  if(unseen.length) return {t:unseen[0], why:'New topic'};
+  const seen = TOPICS.filter(t=>rec(t.id) && t.id!==excludeId)
+    .sort((a,b)=>mastery(a.id)-mastery(b.id));
+  const notToday = seen.filter(t=>{
+    const at = rec(t.id).at; return at[at.length-1].d !== todayStr();
+  });
+  const pick = (notToday.length?notToday:seen)[0];
+  return {t:pick, why:'Weakest topic — '+mastery(pick.id)+'% mastery'};
+}
+
+/* ---------- rendering ---------- */
+const app = document.getElementById('app');
+function esc(s){ return s; }
+
+function render(){
+  if(sess) return renderSession();
+  if(view==='menu') return renderMenu();
+  renderHome();
+}
+let view = 'home';
+function go(v){ view=v; sess=null; window.scrollTo(0,0); render(); }
+
+function renderHome(){
+  const pick = pickTopic();
+  const dl = daysLeft();
+  const covered = TOPICS.filter(t=>rec(t.id)).length;
+  const done = doneToday();
+  app.innerHTML = `
+    <div class="row spread">
+      <h1>GRE Quant Daily</h1>
+      <span class="pill gold">🔥 ${liveStreak()}</span>
+    </div>
+    <div class="row" style="margin-top:8px;flex-wrap:wrap;">
+      <span class="pill" onclick="editDate()" style="cursor:pointer;">📅 ${dl>=0? dl+' day'+(dl===1?'':'s')+' to test day' : 'test date passed'}</span>
+      <span class="pill">${covered}/${TOPICS.length} topics covered</span>
+    </div>
+    <div class="card">
+      ${done? '<div class="chip" style="color:var(--good);background:#12291d;">✓ Daily session done</div>' : '<div class="chip">Today’s session</div>'}
+      <h2>${pick.t.name}</h2>
+      <div class="dim small">${pick.t.cat} · ${pick.why} · ~10–15 min</div>
+      <button class="btn" onclick="startSession('${pick.t.id}')">${done? 'Bonus round →' : 'Start today’s session →'}</button>
+    </div>
+    <button class="btn ghost" onclick="go('menu')">📚 All topics &amp; mastery</button>
+    ${done? '<p class="dim small center">Nice work today. Come back tomorrow to keep the streak alive.</p>' : ''}
+  `;
+}
+
+function renderMenu(){
+  const cats = [...new Set(TOPICS.map(t=>t.cat))];
+  const ms = TOPICS.map(t=>mastery(t.id)).filter(m=>m!==null);
+  const avg = ms.length? Math.round(ms.reduce((a,b)=>a+b,0)/ms.length) : 0;
+  let html = `
+    <button class="back" onclick="go('home')">‹ Home</button>
+    <h1>Topics &amp; mastery</h1>
+    <div class="statgrid">
+      <div class="stat"><div class="v">🔥 ${liveStreak()}</div><div class="k">streak</div></div>
+      <div class="stat"><div class="v">${ms.length}/${TOPICS.length}</div><div class="k">covered</div></div>
+      <div class="stat"><div class="v">${avg}%</div><div class="k">avg mastery</div></div>
+    </div>`;
+  cats.forEach(c=>{
+    html += `<div class="cathead">${c}</div><div class="card" style="padding:6px 14px;">`;
+    TOPICS.filter(t=>t.cat===c).forEach(t=>{
+      const m = mastery(t.id);
+      const r = rec(t.id);
+      const last = r? r.at[r.at.length-1].d : null;
+      html += `
+        <div class="trow" onclick="startSession('${t.id}')">
+          <div class="tinfo">
+            <div class="tname">${t.name}</div>
+            ${m===null
+              ? '<div class="dim small">Not studied yet</div>'
+              : `<div class="bar"><i style="width:${m}%;background:${mcolor(m)}"></i></div>`}
+          </div>
+          <div class="mnum" style="color:${m===null?'var(--dim)':mcolor(m)}">${m===null?'—':m+'%'}</div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  html += `
+    <div class="footlinks">
+      <button class="linkish" onclick="exportData()">Export data</button>
+      <button class="linkish" onclick="importData()">Import data</button>
+      <button class="linkish" onclick="editDate()">Test date</button>
+      <button class="linkish" style="color:var(--bad)" onclick="resetData()">Reset</button>
+    </div>
+    <p class="dim small center">Progress is saved on this device (localStorage). Use Export/Import to move it between devices.</p>`;
+  app.innerHTML = html;
+}
+
+/* ---------- session ---------- */
+function startSession(id){
+  const t = TOPICS.find(x=>x.id===id);
+  sess = {t:t, stage:'read', i:0, results:[], picked:[], answered:false};
+  window.scrollTo(0,0); render();
+}
+function quitSession(){ sess=null; go('home'); }
+
+function renderSession(){
+  const t = sess.t;
+  if(sess.stage==='read'){
+    app.innerHTML = `
+      <button class="back" onclick="quitSession()">‹ Exit</button>
+      <div class="chip">${t.cat}</div>
+      <h1>${t.name}</h1>
+      <div class="card read">${t.read}</div>
+      <button class="btn" onclick="sess.stage='q';window.scrollTo(0,0);render()">Start the questions →</button>`;
+    return;
+  }
+  if(sess.stage==='q') return renderQuestion();
+  if(sess.stage==='conf') return renderConf();
+  if(sess.stage==='done') return renderDone();
+}
+
+function dotsHtml(){
+  return '<div class="dots">'+sess.t.qs.map((q,j)=>{
+    if(j<sess.results.length) return `<span class="dot ${sess.results[j]?'good':'bad'}"></span>`;
+    if(j===sess.i) return '<span class="dot on"></span>';
+    return '<span class="dot"></span>';
+  }).join('')+'</div>';
+}
+
+function renderQuestion(){
+  const t = sess.t, q = t.qs[sess.i];
+  let body = '';
+  if(q.t==='qc'){
+    body = `<div class="read">${q.q||''}</div>
+      <div class="qtybox">
+        <div class="qty"><div class="lbl">Quantity A</div><div class="val">${q.A}</div></div>
+        <div class="qty"><div class="lbl">Quantity B</div><div class="val">${q.B}</div></div>
+      </div>`
+      + QC.map((c,j)=>choiceBtn(j,c)).join('');
+  } else if(q.t==='mc'){
+    body = `<div class="read">${q.q}</div>` + q.ch.map((c,j)=>choiceBtn(j,c)).join('');
+  } else if(q.t==='ms'){
+    body = `<div class="read">${q.q}</div>` + q.ch.map((c,j)=>choiceBtn(j,c)).join('')
+      + (sess.answered?'':'<button class="btn slim" onclick="checkMS()">Check answer</button>');
+  } else {
+    body = `<div class="read">${q.q}</div>
+      <input type="text" id="ne" inputmode="text" autocomplete="off" placeholder="Enter a number (fractions like 3/4 are OK)"
+        ${sess.answered?'disabled':''} onkeydown="if(event.key==='Enter')checkNE()">
+      ${sess.answered?'':'<button class="btn slim" onclick="checkNE()">Check answer</button>'}`;
+  }
+  app.innerHTML = `
+    <button class="back" onclick="quitSession()">‹ Exit</button>
+    <div class="row spread">
+      <span class="dim small">${t.name}</span>
+      <span class="dim small">Q ${sess.i+1}/${t.qs.length}</span>
+    </div>
+    ${dotsHtml()}
+    <div class="qtype">${TYPE_LABEL[q.t]}</div>
+    <div class="card">${body}${sess.answered? feedbackHtml(q) : ''}</div>
+    ${sess.answered? `<button class="btn" onclick="nextQ()">${sess.i+1<t.qs.length?'Next question →':'Finish →'}</button>` : ''}`;
+  if(q.t==='ne' && sess.answered){
+    document.getElementById('ne').value = sess.neVal||'';
+  }
+}
+
+function choiceBtn(j,c){
+  const q = sess.t.qs[sess.i];
+  let cls = 'choice', extra = '';
+  if(sess.answered){
+    const corr = q.t==='ms' ? q.ans.includes(j) : j===q.ans;
+    const pickedIt = q.t==='ms' ? sess.picked.includes(j) : sess.pickedOne===j;
+    if(corr) cls += ' correct';
+    else if(pickedIt) cls += ' wrong';
+    extra = 'disabled';
+  } else if(q.t==='ms' && sess.picked.includes(j)){
+    cls += ' sel';
+  }
+  const fn = q.t==='ms' ? `togglePick(${j})` : `answerOne(${j})`;
+  return `<button class="${cls}" ${extra} onclick="${fn}"><span class="key">${'ABCDEF'[j]}</span> ${c}</button>`;
+}
+
+function answerOne(j){
+  if(sess.answered) return;
+  const q = sess.t.qs[sess.i];
+  sess.pickedOne = j;
+  finishQ(j===q.ans);
+}
+function togglePick(j){
+  if(sess.answered) return;
+  const k = sess.picked.indexOf(j);
+  if(k>=0) sess.picked.splice(k,1); else sess.picked.push(j);
+  render();
+}
+function checkMS(){
+  if(sess.answered) return;
+  const q = sess.t.qs[sess.i];
+  const a = [...sess.picked].sort().join(','), b = [...q.ans].sort().join(',');
+  finishQ(a===b && sess.picked.length>0);
+}
+function parseNum(s){
+  s = String(s).trim().replace(/,/g,'').replace(/\s+/g,'');
+  const m = s.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/);
+  if(m) return parseFloat(m[1])/parseFloat(m[2]);
+  return parseFloat(s);
+}
+function checkNE(){
+  if(sess.answered) return;
+  const q = sess.t.qs[sess.i];
+  const raw = document.getElementById('ne').value;
+  if(!raw.trim()) return;
+  sess.neVal = raw;
+  const v = parseNum(raw);
+  const tol = Math.max(0.001, Math.abs(q.ans)*0.001);
+  finishQ(!isNaN(v) && Math.abs(v-q.ans)<=tol);
+}
+function finishQ(correct){
+  sess.answered = true;
+  sess.lastCorrect = correct;
+  sess.results.push(correct);
+  render();
+}
+function feedbackHtml(q){
+  const ok = sess.lastCorrect;
+  return `<div class="exp ${ok?'good':'bad'}">
+    <div class="verdict ${ok?'good':'bad'}">${ok?'✓ Correct':'✗ Not quite'}</div>
+    ${q.exp}</div>`;
+}
+function nextQ(){
+  sess.answered = false; sess.picked = []; sess.pickedOne = null; sess.neVal = '';
+  if(sess.i+1 < sess.t.qs.length){ sess.i++; window.scrollTo(0,0); render(); }
+  else { sess.stage='conf'; sess.conf=3; window.scrollTo(0,0); render(); }
+}
+
+function renderConf(){
+  app.innerHTML = `
+    <div class="chip">${sess.t.cat}</div>
+    <h1>How confident do you feel?</h1>
+    <p class="dim">Rate <b>${sess.t.name}</b> after today. This drives your mastery score and what gets picked for review.</p>
+    <div class="card center">
+      <div class="conflabel" id="cw">${CONF_WORDS[sess.conf]}</div>
+      <input class="conf" type="range" min="1" max="5" step="1" value="${sess.conf}"
+        oninput="sess.conf=+this.value;document.getElementById('cw').textContent=CONF_WORDS[sess.conf]">
+      <div class="row spread dim small"><span>Lost</span><span>Nailed it</span></div>
+    </div>
+    <button class="btn" onclick="finishSession()">Save →</button>`;
+}
+
+function finishSession(){
+  const t = sess.t;
+  const c = sess.results.filter(Boolean).length;
+  if(!S.topics[t.id]) S.topics[t.id] = {at:[]};
+  S.topics[t.id].at.push({d:todayStr(), c:c, t:t.qs.length, conf:sess.conf});
+  const today = todayStr();
+  sess.streakBefore = liveStreak();
+  if(S.lastDone!==today){
+    S.streak = (S.lastDone===yesterdayStr()) ? S.streak+1 : 1;
+    S.lastDone = today;
+    if(S.streak>S.best) S.best = S.streak;
+    sess.streakGrew = true;
+  }
+  save();
+  sess.stage='done'; window.scrollTo(0,0); render();
+}
+
+function renderDone(){
+  const t = sess.t;
+  const c = sess.results.filter(Boolean).length, n = t.qs.length;
+  const m = mastery(t.id);
+  app.innerHTML = `
+    <div class="card center">
+      <div class="chip">${t.name}</div>
+      <div class="bigscore">${c}/${n}</div>
+      <div class="dim">questions correct</div>
+      <div class="statgrid" style="margin-top:16px;">
+        <div class="stat"><div class="v">🔥 ${liveStreak()}</div><div class="k">streak${sess.streakGrew?' +1':''}</div></div>
+        <div class="stat"><div class="v" style="color:${mcolor(m)}">${m}%</div><div class="k">mastery</div></div>
+        <div class="stat"><div class="v">${daysLeft()}</div><div class="k">days left</div></div>
+      </div>
+    </div>
+    <button class="btn" onclick="bonusRound('${t.id}')">Study another topic →</button>
+    <button class="btn ghost" onclick="quitSession()">Done for now</button>`;
+}
+function bonusRound(exclude){
+  const p = pickTopic(exclude);
+  startSession(p.t.id);
+}
+
+/* ---------- data utils ---------- */
+function exportData(){
+  const s = JSON.stringify(S);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(s).then(()=>alert('Progress copied to clipboard. Paste it into Import on your other device.'),
+      ()=>prompt('Copy this:', s));
+  } else prompt('Copy this:', s);
+}
+function importData(){
+  const s = prompt('Paste your exported progress:');
+  if(!s) return;
+  try{ const d = JSON.parse(s);
+    if(!d.topics) throw 0;
+    S = d; save(); render(); alert('Imported ✓');
+  }catch(e){ alert('That did not look like valid exported data.'); }
+}
+function editDate(){
+  const s = prompt('Test date (YYYY-MM-DD):', S.testDate);
+  if(s && /^\d{4}-\d{2}-\d{2}$/.test(s)){ S.testDate=s; save(); render(); }
+}
+function resetData(){
+  if(confirm('Erase all progress on this device?')){
+    localStorage.removeItem(KEY); S = load(); render();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
