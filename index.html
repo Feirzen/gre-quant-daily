@@ -530,6 +530,7 @@ function renderMenu(){
       <button class="linkish" onclick="exportData()">Export data</button>
       <button class="linkish" onclick="importData()">Import data</button>
       <button class="linkish" onclick="editDate()">Test date</button>
+      <button class="linkish" onclick="window.Kit && Kit.flag.menu()">Raise a flag</button>
       <button class="linkish" style="color:var(--bad)" onclick="resetData()">Reset</button>
     </div>
     <p class="dim small center">Progress is saved on this device (localStorage). Use Export/Import to move it between devices.</p>`;
@@ -754,6 +755,6 @@ function resetData(){
 
 render();
 </script>
-<script src="https://cdn.jsdelivr.net/gh/Feirzen/flag-hub@main/kit/kit.js" data-app="gre-quant-daily" data-name="GRE Quant Daily" data-look="off" data-gear="off" defer></script>
+<script src="https://feirzen.github.io/flag-hub/kit/kit.js" data-app="gre-quant-daily" data-name="GRE Quant Daily" data-look="off" data-gear="off" data-button="off" defer></script>
 </body>
 </html>
